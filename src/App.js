@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import styled from 'styled-components'
 import NavBar from './NavBar'
+import cc from 'cryptocompare'
+
 const Content = styled.div``
 const AppLayout = styled.div`
 padding:40px;
@@ -19,8 +21,15 @@ const checkFirstVisit=()=>{
 }
 class App extends Component {
   state={
-    page:'dashboard',
+    page:'settings',
   ...checkFirstVisit()
+  }
+  componentDidMount=()=>{
+    this.fetchCoins()
+  }
+  fetchCoins= async ()=>{
+    let coinList = (await cc.coinList()).Data
+    this.setState({coinList})
   }
   displayingDashboard = () =>this.state.page === 'dashboard'
   displayingSettings = () =>this.state.page === 'settings'
@@ -44,13 +53,18 @@ class App extends Component {
       </div>
     </div>
   }
+  loadingContent=()=>{
+    if(!this.state.coinList){
+      return <div>Loading coin...</div>
+    }
+  }
   render() {
     return (
       <AppLayout>
         {NavBar.call(this)}
-      <Content>
+      {this.loadingContent() ||<Content>
         {this.displayingSettings() && this.settingsContent()}
-      </Content>
+      </Content>}
     </AppLayout>
     );
   }
