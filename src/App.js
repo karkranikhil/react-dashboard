@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import styled from 'styled-components'
 import NavBar from './NavBar'
+import CoinList from './CoinList'
 import cc from 'cryptocompare'
 
 const Content = styled.div``
@@ -50,6 +51,9 @@ class App extends Component {
       {this.firstVisitMessage()}
       <div onClick={this.confirmFavorites}>
         Confirm Favorites
+      </div>
+      <div>
+        {CoinList.call(this)}
       </div>
     </div>
   }
