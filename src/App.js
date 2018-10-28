@@ -8,7 +8,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to CryptoDash</h1>
+          <h1 className="App-title">Welcome to Crypto Dashboard</h1>
           <a
             className="App-link"
             href="https://reactjs.org"
