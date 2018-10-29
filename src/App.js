@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import NavBar from './NavBar'
 import CoinList from './CoinList'
 import cc from 'cryptocompare'
-
+import _ from 'lodash'
 const Content = styled.div``
 const AppLayout = styled.div`
 padding:40px;
@@ -73,8 +73,10 @@ class App extends Component {
     }
   }
   removeCoinFromFavorites=(key)=>{
-    console.log('removing...')
+    let favorites = [...this.state.favorites]
+    this.setState({favorites:_.pull(favorites, key)})
   }
+  isInFavorites =(key)=> _.includes(this.state.favorites,key)
   render() {
     return (
       <AppLayout>

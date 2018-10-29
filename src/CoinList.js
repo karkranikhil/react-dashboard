@@ -23,6 +23,10 @@ const CoinTile = styled.div`
         ${redBoxShadow} !important;
     }
     `}
+    ${props=>props.choosen && !props.favorite && css`
+        pointer-events:none;
+        opacity:0.4;
+    `}
 `
 
 const CoinHeaderGrid = styled.div`
@@ -36,7 +40,7 @@ export default function(favorites=false){
     let coinKeys = favorites ? this.state.favorites:Object.keys(this.state.coinList).slice(0,100)
     return <CoinGrid>
         {coinKeys ? coinKeys.map((coinKey,index)=>
-            <CoinTile favorite={favorites} key={index} onClick={favorites ? ()=>{this.removeCoinFromFavorites(coinKey)}:()=>{this.addCointToFavorites(coinKey)}}>
+            <CoinTile choosen={this.isInFavorites(coinKey)} favorite={favorites} key={index} onClick={favorites ? ()=>{this.removeCoinFromFavorites(coinKey)}:()=>{this.addCointToFavorites(coinKey)}}>
                 <CoinHeaderGrid>
                     <div>{this.state.coinList[coinKey].CoinName}</div>
                     <CoinSymbol>{this.state.coinList[coinKey].Symbol}</CoinSymbol>
