@@ -20,9 +20,11 @@ const checkFirstVisit=()=>{
   }
   return {}
 }
+const MAX_FAVORITES = 10
 class App extends Component {
   state={
     page:'settings',
+    favorites: ['ETH', 'BTC', 'XMR', 'DOGE', 'EOS'],
   ...checkFirstVisit()
   }
   componentDidMount=()=>{
@@ -53,7 +55,8 @@ class App extends Component {
         Confirm Favorites
       </div>
       <div>
-        {CoinList.call(this)}
+      {CoinList.call(this, true)}
+      {CoinList.call(this)}
       </div>
     </div>
   }
@@ -61,6 +64,16 @@ class App extends Component {
     if(!this.state.coinList){
       return <div>Loading coin...</div>
     }
+  }
+  addCointToFavorites =(key)=>{
+    let favorites = [...this.state.favorites]
+    if(favorites.length < MAX_FAVORITES){
+      favorites.push(key)
+      this.setState({favorites})
+    }
+  }
+  removeCoinFromFavorites=(key)=>{
+    console.log('removing...')
   }
   render() {
     return (

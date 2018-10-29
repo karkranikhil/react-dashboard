@@ -1,6 +1,6 @@
 import React from 'react'
-import styled from 'styled-components'
-import { subtleBoxShadow, greenBoxShadow, lightBlueBackground } from './Style';
+import styled, {css} from 'styled-components'
+import { subtleBoxShadow, greenBoxShadow,redBoxShadow, lightBlueBackground } from './Style';
 const CoinGrid = styled.div`
     display:grid;
     grid-template-columns:1fr 1fr 1fr 1fr 1fr;
@@ -11,11 +11,20 @@ const CoinTile = styled.div`
     ${subtleBoxShadow}
     ${lightBlueBackground}
     padding:10px;
+    ${props=>!props.favorite && css`
     &:hover{
         cursor:pointer;
         ${greenBoxShadow}
     }
+    `}
+    ${props=>props.favorite && css`
+    &:hover{
+        cursor:pointer;
+        ${redBoxShadow} !important;
+    }
+    `}
 `
+
 const CoinHeaderGrid = styled.div`
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -23,16 +32,17 @@ const CoinHeaderGrid = styled.div`
 const CoinSymbol = styled.div`
     justify-self: right;
 `
-export default function(){
+export default function(favorites=false){
+    let coinKeys = favorites ? this.state.favorites:Object.keys(this.state.coinList).slice(0,100)
     return <CoinGrid>
-        {Object.keys(this.state.coinList).slice(0,100).map((coin,index)=>
-        <CoinTile key={index}>
-        <CoinHeaderGrid>
-        <div>{this.state.coinList[coin].CoinName}</div>
-        <CoinSymbol>{this.state.coinList[coin].Symbol}</CoinSymbol>
-        </CoinHeaderGrid>
-        <img style={{height:'50px'}} alt="coin icon" src={`http://cryptocompare.com/${this.state.coinList[coin].ImageUrl}`}/>
-        </CoinTile>
-        )}
+        {coinKeys ? coinKeys.map((coinKey,index)=>
+            <CoinTile favorite={favorites} key={index} onClick={favorites ? ()=>{this.removeCoinFromFavorites(coinKey)}:()=>{this.addCointToFavorites(coinKey)}}>
+                <CoinHeaderGrid>
+                    <div>{this.state.coinList[coinKey].CoinName}</div>
+                    <CoinSymbol>{this.state.coinList[coinKey].Symbol}</CoinSymbol>
+                </CoinHeaderGrid>
+            <img style={{height:'50px'}} alt="coin icon" src={`http://cryptocompare.com/${this.state.coinList[coinKey].ImageUrl}`}/>
+            </CoinTile>
+        ):null}
     </CoinGrid>
 }
