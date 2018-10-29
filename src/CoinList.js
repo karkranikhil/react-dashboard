@@ -36,6 +36,16 @@ const CoinHeaderGrid = styled.div`
 const CoinSymbol = styled.div`
     justify-self: right;
 `
+const DeleteIcon = styled.div`
+    justify-self: right;
+    display:none;
+    ${CoinTile}:hover & {
+        display:block;
+        color:red;
+    }
+`
+
+
 export default function(favorites=false){
     let coinKeys = favorites ? this.state.favorites:Object.keys(this.state.coinList).slice(0,100)
     return <CoinGrid>
@@ -43,7 +53,9 @@ export default function(favorites=false){
             <CoinTile choosen={this.isInFavorites(coinKey)} favorite={favorites} key={index} onClick={favorites ? ()=>{this.removeCoinFromFavorites(coinKey)}:()=>{this.addCointToFavorites(coinKey)}}>
                 <CoinHeaderGrid>
                     <div>{this.state.coinList[coinKey].CoinName}</div>
-                    <CoinSymbol>{this.state.coinList[coinKey].Symbol}</CoinSymbol>
+                    {favorites ? 
+                    <DeleteIcon>X</DeleteIcon>:
+                    <CoinSymbol>{this.state.coinList[coinKey].Symbol}</CoinSymbol>}
                 </CoinHeaderGrid>
             <img style={{height:'50px'}} alt="coin icon" src={`http://cryptocompare.com/${this.state.coinList[coinKey].ImageUrl}`}/>
             </CoinTile>
