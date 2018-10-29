@@ -5,9 +5,16 @@ import NavBar from './NavBar'
 import CoinList from './CoinList'
 import cc from 'cryptocompare'
 import _ from 'lodash'
+import Search from './Search'
+import {ConfirmButton} from './Button'
+
 const Content = styled.div``
 const AppLayout = styled.div`
 padding:40px;
+`
+export const CenterDiv = styled.div`
+  display:grid;
+  justify-content:center;
 `
 const checkFirstVisit=()=>{
   console.log('called')
@@ -42,20 +49,25 @@ class App extends Component {
     }
   }
   confirmFavorites=()=>{
-    localStorage.setItem('cryptoDash', 'test');
     this.setState({
       firstVisit:false,
       page:'dashboard'
     })
+    localStorage.setItem('cryptoDash', JSON.stringify({
+      favorites:this.state.favorites
+    }));
   }
   settingsContent =()=>{
     return <div>
       {this.firstVisitMessage()}
-      <div onClick={this.confirmFavorites}>
-        Confirm Favorites
-      </div>
       <div>
       {CoinList.call(this, true)}
+      <CenterDiv>
+        <ConfirmButton onClick={this.confirmFavorites}>
+        Confirm Favorites
+      </ConfirmButton>
+      </CenterDiv>
+      {Search.call(this)}
       {CoinList.call(this)}
       </div>
     </div>
