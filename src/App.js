@@ -7,7 +7,7 @@ import cc from 'cryptocompare'
 import _ from 'lodash'
 import Search from './Search'
 import {ConfirmButton} from './Button'
-
+import fuzzy from 'fuzzy'
 const Content = styled.div``
 const AppLayout = styled.div`
 padding:40px;
@@ -89,6 +89,31 @@ class App extends Component {
     this.setState({favorites:_.pull(favorites, key)})
   }
   isInFavorites =(key)=> _.includes(this.state.favorites,key)
+  handleFilter=_.debounce((inputValue)=>{
+    console.log('inputValue', inputValue)
+    let coinSymbols = Object.keys(this.state.coinList)
+    let coinNames = coinSymbols.map(sym=>this.state.coinList[sym].CoinName)
+    let allStringsToSearch = coinSymbols.concat(coinNames)
+    let fuzzyResults = fuzzy.filter(inputValue, allStringsToSearch, {}).map(result =>result.string)
+    console.log(this.state.coinList)
+    let filteredCoins = _.pickBy(this.state.coinList, (result, symkey)=>{
+      console.log('symkey',symkey)
+      let coinName = result.CoinName
+      return _.includes(fuzzyResults, symkey) || _.includes(fuzzyResults, coinName)
+    })
+    this.setState({filteredCoins})
+    console.log(filteredCoins)
+  }, 500)
+  filterCoins=(e)=>{
+    let inputValue=_.get(e, 'target.value')
+    if(!inputValue){
+      this.setState({
+        filteredCoins:null
+      })
+      return;
+    }
+    this.handleFilter(inputValue)
+  }
   render() {
     return (
       <AppLayout>
