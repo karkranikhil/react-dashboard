@@ -103,7 +103,7 @@ class App extends Component {
     })
     this.setState({filteredCoins})
     console.log(filteredCoins)
-  }, 500)
+  }, 100)
   filterCoins=(e)=>{
     let inputValue=_.get(e, 'target.value')
     if(!inputValue){
