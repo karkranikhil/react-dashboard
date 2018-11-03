@@ -1,6 +1,6 @@
 export const fontSize2 = `font-size:2.0em`
 export const fontSize1 = `font-size:1.0em`
-
+export const fontSizeBig = `font-size:5.0em`
 export const color = '#061a44'
 export const color2 = '#010e2c'
 export const color3 = '#053c18'

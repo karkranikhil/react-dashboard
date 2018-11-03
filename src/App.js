@@ -8,6 +8,7 @@ import _ from 'lodash'
 import Search from './Search'
 import {ConfirmButton} from './Button'
 import fuzzy from 'fuzzy'
+import Dashboard from './Dashboard'
 const Content = styled.div``
 const AppLayout = styled.div`
 padding:40px;
@@ -18,24 +19,45 @@ export const CenterDiv = styled.div`
 `
 const checkFirstVisit=()=>{
   console.log('called')
-  let cryptoDashData = localStorage.getItem('cryptoDash')
+  let cryptoDashData = JSON.parse(localStorage.getItem('cryptoDash'))
   if(!cryptoDashData){
     return {
       firstVisit:true,
       page:'settings'
     }
   }
-  return {}
+  return {
+    favorites:cryptoDashData.favorites
+  }
 }
 const MAX_FAVORITES = 10
 class App extends Component {
   state={
-    page:'settings',
+    page:'dashboard',
     favorites: ['ETH', 'BTC', 'XMR', 'DOGE', 'EOS'],
   ...checkFirstVisit()
   }
   componentDidMount=()=>{
     this.fetchCoins()
+    this.fetchPrice()
+  }
+  fetchPrice=async()=>{
+    let prices
+    try{
+      prices= await this.prices()
+    } catch(e){
+      this.setState({error:true})
+    }
+    console.log(prices)
+    this.setState({prices})
+  }
+  prices=()=>{
+    let promises=[];
+    this.state.favorites.forEach(sym=>{
+      promises.push(cc.priceFull(sym,'USD')
+      )
+    })
+    return Promise.all(promises)
   }
   fetchCoins= async ()=>{
     let coinList = (await cc.coinList()).Data
@@ -51,8 +73,10 @@ class App extends Component {
   confirmFavorites=()=>{
     this.setState({
       firstVisit:false,
-      page:'dashboard'
+      page:'dashboard',
+      prices:null
     })
+    this.fetchPrice()
     localStorage.setItem('cryptoDash', JSON.stringify({
       favorites:this.state.favorites
     }));
@@ -75,6 +99,8 @@ class App extends Component {
   loadingContent=()=>{
     if(!this.state.coinList){
       return <div>Loading coin...</div>
+    }if(!this.state.prices){
+      return <div>Loading prices...</div>
     }
   }
   addCointToFavorites =(key)=>{
@@ -120,6 +146,7 @@ class App extends Component {
         {NavBar.call(this)}
       {this.loadingContent() ||<Content>
         {this.displayingSettings() && this.settingsContent()}
+        {this.displayingDashboard() && Dashboard.call(this)}
       </Content>}
     </AppLayout>
     );
