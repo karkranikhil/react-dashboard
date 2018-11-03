@@ -1,6 +1,6 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Benefits of choosing create-react-app
+### Benefits of choosing create-react-app
 * Official React.js starter project by Facebook
 * "Create React apps with no build configuration"
 * Only 3 commands to an enterprise-grade web application
@@ -13,7 +13,7 @@ Benefits of choosing create-react-app
 * immediately start coding
 * command for optimized production build
 
-Below are the technologies we have used for this Project<br>
+### Below are the technologies we have used for this Project<br>
 
 * React - It is an open-source JavaScript library which is used for building user interfaces specifically for single page applications.
 * Styled-components - It is a library that gives you the way to handling styling using CSS-in-JS.
