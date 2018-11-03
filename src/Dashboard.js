@@ -46,7 +46,11 @@ export default function(){
         let tileProps={
             dashboardFavorite:sym=== self.state.currentFavorite,
             onClick:()=>{
-                self.setState({currentFavorite:sym})
+                self.setState({currentFavorite:sym});
+                localStorage.setItem('cryptoDash', JSON.stringify({
+                    ...JSON.parse(localStorage.getItem('cryptoDash')),
+                    currentFavorite:sym,
+                  }));
             }
         }
         return index<5 ?<CoinTile {...tileProps} key ={index}>
