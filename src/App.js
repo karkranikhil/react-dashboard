@@ -39,6 +39,7 @@ class App extends Component {
   state={
     page:'dashboard',
     favorites: ['ETH', 'BTC', 'XMR', 'DOGE', 'EOS'],
+    timeInterval:'months',
   ...checkFirstVisit()
   }
   componentDidMount=()=>{
@@ -47,6 +48,7 @@ class App extends Component {
     this.fetchPrice()
   }
   fetchPrice=async()=>{
+    if(this.state.firstVisit) return
     let prices
     try{
       prices= await this.prices()
@@ -57,20 +59,19 @@ class App extends Component {
     this.setState({prices})
   }
   fetchHistorical=async()=>{
-    if(this.state.currentFavorite){
+    if(this.state.firstVisit) return
       let result = await this.historical()
       let historical=[{
         name:this.state.currentFavorite,
-        data:result.map((ticker,index)=>[moment().subtract({months:TIME_UNITS - index}).valueOf(), ticker.USD])
+        data:result.map((ticker,index)=>[moment().subtract({[this.state.timeInterval]:TIME_UNITS - index}).valueOf(), ticker.USD])
       }]
       this.setState({historical})
       //console.log(historical)
-    }
   }
   historical=()=>{
     let promises =[]
     for(let units = TIME_UNITS; units>0; units--){
-      promises.push(cc.priceHistorical(this.state.currentFavorite,['USD'], moment().subtract({months:units}).toDate()))
+      promises.push(cc.priceHistorical(this.state.currentFavorite,['USD'], moment().subtract({[this.state.timeInterval]:units}).toDate()))
     }
     return Promise.all(promises)
   }
@@ -129,7 +130,8 @@ class App extends Component {
   loadingContent=()=>{
     if(!this.state.coinList){
       return <div>Loading coin...</div>
-    }if(!this.state.prices){
+    }
+    if(!this.state.firstVisit && !this.state.prices){
       return <div>Loading prices...</div>
     }
   }
