@@ -47,6 +47,15 @@ class App extends Component {
     this.fetchCoins()
     this.fetchPrice()
   }
+  validateFavorites=(coinList)=>{
+    let validateFavorites=[]
+    this.state.favorites.forEach(favorite=>{
+      if(coinList[favorite]){
+        validateFavorites.push(favorite)
+      }
+      return validateFavorites
+    })
+  }
   fetchPrice=async()=>{
     if(this.state.firstVisit) return
     let prices
@@ -75,17 +84,27 @@ class App extends Component {
     }
     return Promise.all(promises)
   }
-  prices=()=>{
-    let promises=[];
-    this.state.favorites.forEach(sym=>{
-      promises.push(cc.priceFull(sym,'USD')
-      )
-    })
-    return Promise.all(promises)
+  prices=async ()=>{
+    // let promises=[];
+    // this.state.favorites.forEach(sym=>{
+    //   promises.push(cc.priceFull(sym,'USD')
+    //   )
+    // })
+    // return Promise.all(promises)
+    let returnData =[];
+    for(let i=0;i<this.state.favorites.length;i++){
+      try{
+        let priceData = await cc.priceFull(this.state.favorites[i], 'USD')
+        returnData.push(priceData)
+      } catch(e){
+        console.warn('Fetch price error', e)
+      }
+    }
+    return returnData
   }
   fetchCoins= async ()=>{
     let coinList = (await cc.coinList()).Data
-    this.setState({coinList})
+    this.setState({coinList, favorites:this.validateFavorites(coinList)})
   }
 
   displayingDashboard = () =>this.state.page === 'dashboard'
