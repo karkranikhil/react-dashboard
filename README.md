@@ -26,3 +26,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 * <b>Webkit inspector</b> -  For debugging
 * <b>localstorage - to set and retrieve data from web browser
 * <b>Google fonts</b> - fonts 
+
+### Thanks & reference 
+* Thanks to Udemy & Digital Hermits
