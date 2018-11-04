@@ -2,7 +2,11 @@ import React from 'react'
 import {CoinGrid, CoinTile, CoinHeaderGrid, CoinSymbol} from './CoinList'
 import styled, {css} from 'styled-components'
 import {fontSize2, fontSize1, subtleBoxShadow, lightBlueBackground} from './Style'
+import highchartsConfig from './HighchartsConfig';
+import theme from './HighchartsTheme'
 
+const ReactHighcharts = require('react-highcharts')
+ReactHighcharts.Highcharts.setOptions(theme);
 
 const numberFormat =(number) =>{
     return +(number+'').slice(0,7);
@@ -46,7 +50,7 @@ export default function(){
         let tileProps={
             dashboardFavorite:sym=== self.state.currentFavorite,
             onClick:()=>{
-                self.setState({currentFavorite:sym});
+                self.setState({currentFavorite:sym,historical:null}, self.fetchHistorical);
                 localStorage.setItem('cryptoDash', JSON.stringify({
                     ...JSON.parse(localStorage.getItem('cryptoDash')),
                     currentFavorite:sym,
@@ -80,7 +84,11 @@ export default function(){
             {this.state.coinList[this.state.currentFavorite] &&<h2 style={{textAlign:'center'}}>{this.state.coinList[this.state.currentFavorite].CoinName}</h2>}
             <img style={{height:'200px', display:'block', margin:'auto'}} alt="coin icon" src={`http://cryptocompare.com/${this.state.coinList[this.state.currentFavorite].ImageUrl}`}/>
         </PaddingBlue>
-        <PaddingBlue>Chart goes here</PaddingBlue>
+        <PaddingBlue>
+            {this.state.historical ? 
+            <ReactHighcharts config={highchartsConfig.call(this)}></ReactHighcharts>
+        :<div>Loading historical data...</div>}
+        </PaddingBlue>
     </ChartGrid>
     </div>
 }

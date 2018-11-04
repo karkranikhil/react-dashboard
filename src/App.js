@@ -9,6 +9,7 @@ import Search from './Search'
 import {ConfirmButton} from './Button'
 import fuzzy from 'fuzzy'
 import Dashboard from './Dashboard'
+import moment from 'moment'
 const Content = styled.div``
 const AppLayout = styled.div`
 padding:40px;
@@ -33,6 +34,7 @@ const checkFirstVisit=()=>{
   }
 }
 const MAX_FAVORITES = 10
+const TIME_UNITS =10
 class App extends Component {
   state={
     page:'dashboard',
@@ -40,6 +42,7 @@ class App extends Component {
   ...checkFirstVisit()
   }
   componentDidMount=()=>{
+    this.fetchHistorical()
     this.fetchCoins()
     this.fetchPrice()
   }
@@ -53,6 +56,24 @@ class App extends Component {
     console.log(prices)
     this.setState({prices})
   }
+  fetchHistorical=async()=>{
+    if(this.state.currentFavorite){
+      let result = await this.historical()
+      let historical=[{
+        name:this.state.currentFavorite,
+        data:result.map((ticker,index)=>[moment().subtract({months:TIME_UNITS - index}).valueOf(), ticker.USD])
+      }]
+      this.setState({historical})
+      //console.log(historical)
+    }
+  }
+  historical=()=>{
+    let promises =[]
+    for(let units = TIME_UNITS; units>0; units--){
+      promises.push(cc.priceHistorical(this.state.currentFavorite,['USD'], moment().subtract({months:units}).toDate()))
+    }
+    return Promise.all(promises)
+  }
   prices=()=>{
     let promises=[];
     this.state.favorites.forEach(sym=>{
@@ -65,6 +86,7 @@ class App extends Component {
     let coinList = (await cc.coinList()).Data
     this.setState({coinList})
   }
+
   displayingDashboard = () =>this.state.page === 'dashboard'
   displayingSettings = () =>this.state.page === 'settings'
   firstVisitMessage=()=>{
@@ -78,9 +100,12 @@ class App extends Component {
       firstVisit:false,
       page:'dashboard',
       prices:null,
-      currentFavorite
+      currentFavorite,
+      historical:null
+    },()=>{
+      this.fetchPrice()
+      this.fetchHistorical()
     })
-    this.fetchPrice()
     localStorage.setItem('cryptoDash', JSON.stringify({
       favorites:this.state.favorites,
       currentFavorite
