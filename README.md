@@ -27,5 +27,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 * <b>localstorage - to set and retrieve data from web browser
 * <b>Google fonts</b> - fonts 
 
-### Thanks & reference 
+### UI screen for reference
+<img src='./images/Full_coin_list.png' alt='full view'/>
+<img src='./images/setting.png' alt='setting'/>
+<img src='./images/Dashboard.png' alt='dashboard'/>
+
+### Thanks & references
 * Thanks to Udemy & Digital Hermits
