@@ -18,8 +18,14 @@ export const CenterDiv = styled.div`
   display:grid;
   justify-content:center;
 `
+export const SelectedFav = styled.div`
+  margin-top: 40px;
+`
+export const NotFound = styled.div`
+  padding-left: 140px;
+  color: red;
+`
 const checkFirstVisit=()=>{
-  console.log('called')
   let cryptoDashData = JSON.parse(localStorage.getItem('cryptoDash'))
   if(!cryptoDashData){
     return {
@@ -36,12 +42,13 @@ const checkFirstVisit=()=>{
 const MAX_FAVORITES = 10
 const TIME_UNITS =10
 class App extends Component {
-  state={
-    page:'dashboard',
+  state = {
+    page: 'dashboard',
+    notFound:false,
     favorites: ['ETH', 'BTC', 'XMR', 'DOGE', 'EOS'],
-    timeInterval:'months',
-  ...checkFirstVisit()
-  }
+    timeInterval: 'months',
+    ...checkFirstVisit()
+  };
   componentDidMount=()=>{
     this.fetchHistorical()
     this.fetchCoins()
@@ -53,8 +60,8 @@ class App extends Component {
       if(coinList[favorite]){
         validateFavorites.push(favorite)
       }
-      return validateFavorites
     })
+    return validateFavorites
   }
   fetchPrice=async()=>{
     if(this.state.firstVisit) return
@@ -64,7 +71,6 @@ class App extends Component {
     } catch(e){
       this.setState({error:true})
     }
-    console.log(prices)
     this.setState({prices})
   }
   fetchHistorical=async()=>{
@@ -75,7 +81,6 @@ class App extends Component {
         data:result.map((ticker,index)=>[moment().subtract({[this.state.timeInterval]:TIME_UNITS - index}).valueOf(), ticker.USD])
       }]
       this.setState({historical})
-      //console.log(historical)
   }
   historical=()=>{
     let promises =[]
@@ -111,7 +116,7 @@ class App extends Component {
   displayingSettings = () =>this.state.page === 'settings'
   firstVisitMessage=()=>{
     if(this.state.firstVisit){
-      return <div>Welcome to CryptoDash, please select your favorite conis to begin.</div>
+      return <div>Welcome to CryptoDash, please select your favorite coins to begin.</div>
     }
   }
   confirmFavorites=()=>{
@@ -135,13 +140,15 @@ class App extends Component {
     return <div>
       {this.firstVisitMessage()}
       <div>
+      <SelectedFav>Selected Favorites</SelectedFav>  
       {CoinList.call(this, true)}
       <CenterDiv>
-        <ConfirmButton onClick={this.confirmFavorites}>
+        {this.state.favorites && this.state.favorites.length >0 &&  <ConfirmButton onClick={this.confirmFavorites}>
         Confirm Favorites
-      </ConfirmButton>
+      </ConfirmButton>}
       </CenterDiv>
       {Search.call(this)}
+      {this.state.notFound && <NotFound>No coin found</NotFound>}
       {CoinList.call(this)}
       </div>
     </div>
@@ -162,24 +169,30 @@ class App extends Component {
     }
   }
   removeCoinFromFavorites=(key)=>{
-    let favorites = [...this.state.favorites]
-    this.setState({favorites:_.pull(favorites, key)})
+    if(!this.state.favorites){
+      this.setState({firstVisit:true})
+    } else {
+      let favorites = [...this.state.favorites]
+      this.setState({favorites:_.pull(favorites, key)})
+    }
+    
   }
   isInFavorites =(key)=> _.includes(this.state.favorites,key)
   handleFilter=_.debounce((inputValue)=>{
-    console.log('inputValue', inputValue)
     let coinSymbols = Object.keys(this.state.coinList)
     let coinNames = coinSymbols.map(sym=>this.state.coinList[sym].CoinName)
     let allStringsToSearch = coinSymbols.concat(coinNames)
     let fuzzyResults = fuzzy.filter(inputValue, allStringsToSearch, {}).map(result =>result.string)
-    console.log(this.state.coinList)
     let filteredCoins = _.pickBy(this.state.coinList, (result, symkey)=>{
-      console.log('symkey',symkey)
       let coinName = result.CoinName
       return _.includes(fuzzyResults, symkey) || _.includes(fuzzyResults, coinName)
     })
+    if(filteredCoins && Object.keys(filteredCoins).length === 0 ){
+      this.setState({notFound:true})
+    } else {
+      this.setState({notFound:false})
+    }
     this.setState({filteredCoins})
-    console.log(filteredCoins)
   }, 100)
   filterCoins=(e)=>{
     let inputValue=_.get(e, 'target.value')

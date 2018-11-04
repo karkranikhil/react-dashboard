@@ -21,11 +21,11 @@ export default function(){
             CryptoDash
           </Logo>
           <div></div>
-          {!this.state.firstVisit && <ControlButton onClick={()=>{this.setState({page:'dashboard'})}} active={this.displayingDashboard()}>
+          {!this.state.firstVisit && this.state.favorites && this.state.favorites.length >0 &&<ControlButton onClick={()=>{this.setState({page:'dashboard'})}} active={this.displayingDashboard()}>
             Dashboard
           </ControlButton>}
           <ControlButton onClick={()=>{this.setState({page:'settings'})}} active={this.displayingSettings()}>
-            Setting
+            Settings
           </ControlButton>
         </NavBar>
 }

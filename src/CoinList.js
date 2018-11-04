@@ -1,7 +1,6 @@
 import React from 'react'
 import styled, {css} from 'styled-components'
 import { subtleBoxShadow, greenBoxShadow,redBoxShadow, lightBlueBackground } from './Style';
-import _ from 'lodash'
 
 export const CoinGrid = styled.div`
     display:grid;
@@ -10,7 +9,7 @@ export const CoinGrid = styled.div`
     ${props=>props.count && css`
         grid-template-columns:repeat(${props.count >5 ? props.count:5}, 1fr);
     `}
-    margin-top:40px;
+    margin-top:15px;
 `
 export const CoinTile = styled.div`
     ${subtleBoxShadow}
@@ -59,10 +58,10 @@ const DeleteIcon = styled.div`
 
 
 export default function(favorites=false){
-    let coinKeys = favorites ? 
-    this.state.favorites:
+    console.log(this.state.favorites)
+    let coinKeys = favorites ? this.state.favorites:
     ((this.state.filteredCoins && Object.keys(this.state.filteredCoins)) || (Object.keys(this.state.coinList).slice(0,100)))
-    return <CoinGrid count={favorites && this.state.favorites.length}>
+    return <CoinGrid count={favorites && this.state.favorites && this.state.favorites.length}>
         {coinKeys ? coinKeys.map((coinKey,index)=>
             <CoinTile choosen={this.isInFavorites(coinKey)} favorite={favorites} key={index} onClick={favorites ? ()=>{this.removeCoinFromFavorites(coinKey)}:()=>{this.addCointToFavorites(coinKey)}}>
                 <CoinHeaderGrid>

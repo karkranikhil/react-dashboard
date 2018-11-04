@@ -48,16 +48,15 @@ const ChartSelect = styled.select`
 `
 
 export default function(){
-    var self = this;
     return <div>
     <CoinGrid>
-        {this.state.prices.map(function(price,index){
+        {this.state.prices.map((price,index)=>{
         let sym = Object.keys(price)[0]
         let data = price[sym]['USD']
         let tileProps={
-            dashboardFavorite:sym=== self.state.currentFavorite,
+            dashboardFavorite:sym=== this.state.currentFavorite,
             onClick:()=>{
-                self.setState({currentFavorite:sym,historical:null}, self.fetchHistorical);
+                this.setState({currentFavorite:sym,historical:null}, this.fetchHistorical);
                 localStorage.setItem('cryptoDash', JSON.stringify({
                     ...JSON.parse(localStorage.getItem('cryptoDash')),
                     currentFavorite:sym,
@@ -89,15 +88,15 @@ export default function(){
     <ChartGrid>
         <PaddingBlue>
             {this.state.coinList[this.state.currentFavorite] &&<h2 style={{textAlign:'center'}}>{this.state.coinList[this.state.currentFavorite].CoinName}</h2>}
-            <img style={{height:'200px', display:'block', margin:'auto'}} alt="coin icon" src={`http://cryptocompare.com/${this.state.coinList[this.state.currentFavorite].ImageUrl}`}/>
+            <img alt={this.state.currentFavorite} style={{height:'200px', display:'block', margin:'auto'}} src={`http://cryptocompare.com/${this.state.coinList[this.state.currentFavorite].ImageUrl}`}/>
         </PaddingBlue>
         <PaddingBlue>
-        <ChartSelect onChange={(e)=>{
+        <ChartSelect defaultValue={'months'} onChange={(e)=>{
             this.setState({timeInterval:e.target.value, historical:null},this.fetchHistorical);
         }}>
             <option value="days">Days</option>
             <option value="weeks">Weeks</option>
-            <option selected value="months">Months</option>
+            <option value="months">Months</option>
         </ChartSelect>
             {this.state.historical ? 
             <ReactHighcharts config={highchartsConfig.call(this)}></ReactHighcharts>

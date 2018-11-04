@@ -5,9 +5,9 @@ import {WhiteText} from './Text'
 
 
 const SearchContainer = styled.div`
-    margin-top:40px;
+    margin-top:20px;
     display:grid;
-    grid-template-columns:200px 1fr;
+    grid-template-columns:110px 1fr;
     grid-gap:20px;
 `
 const SearchInput = styled.input`
@@ -17,7 +17,9 @@ const SearchInput = styled.input`
     border:1px solid;
     ${fontSize2}
     margin:5px;
-    height:25px;
+    height: 40px;
+    line-height: 40px;
+    width: 80%;
 `
 export default function(){
     return <SearchContainer>
