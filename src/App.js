@@ -67,8 +67,8 @@ class App extends Component {
     if(this.state.firstVisit) return
     let prices
     try{
-      let pricesList= await this.prices()
-      prices = prices.filter(item=>Object.keys(item).length)
+      prices= await this.prices()
+      //prices = prices.filter(item=>Object.keys(item).length)
     } catch(e){
       this.setState({error:true})
     }
